@@ -7,6 +7,7 @@ import numpy as np
 import json
 import base64
 from arma import arma
+from rungekutta import rungekutta
 import io
 
 def wrapper_solve_input(s):
@@ -40,6 +41,15 @@ def arma_handler():
         paras = request.json
         ret = arma( {'length': paras['length'], 'data': io.BytesIO(base64.standard_b64decode(paras['data'])) })
         return json.dumps(ret)
+    except Exception as e:
+        abort(403, description=str(e))
+
+@app.route('/rungekutta', methods=['POST'])
+def runge_handler():
+    try:
+        paras = request.json
+        ret = rungekutta(paras)
+        return json.dumps(ret, cls=NumpyEncoder)
     except Exception as e:
         abort(403, description=str(e))
 
